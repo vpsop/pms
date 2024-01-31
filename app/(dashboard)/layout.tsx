@@ -1,24 +1,45 @@
+"use client"
+
+import { useRouter } from "next/navigation";
 import { Navbar } from "./_components/navbar";
 import { Sidebar } from "./_components/sidebar";
+import { useSigninCheck } from "reactfire";
+import Loading from "@/components/loading";
 
 const DashboardLayout = ({
   children
 }: {
   children: React.ReactNode;
 }) => {
-  return ( 
-    <div className="h-full">
-      <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">
-        <Navbar />
+
+  const router = useRouter();
+  const { status: signInStatus, data: signInCheckResult } = useSigninCheck();
+
+
+  if (signInStatus === "loading") {
+    return <Loading/>;
+  }
+
+  if (signInCheckResult.signedIn === true) {
+    return (
+      <div className="h-screen">
+        <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">
+          <Navbar />
+        </div>
+        <div className="hidden md:flex h-full w-56 flex-col fixed inset-y-0 z-50">
+          <Sidebar />
+        </div>
+        <main className="md:pl-56 pt-[80px] h-full">
+          {children}
+        </main>
       </div>
-      <div className="hidden md:flex h-full w-56 flex-col fixed inset-y-0 z-50">
-        <Sidebar />
-      </div>
-      <main className="md:pl-56 pt-[80px] h-full">
-        {children}
-      </main>
-    </div>
-   );
+    );
+  } else {
+    router.push("/login");
+  }
+
+
+  
 }
- 
+
 export default DashboardLayout;

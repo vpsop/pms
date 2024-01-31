@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSigninCheck } from "reactfire";
+import Loading from "@/components/loading";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -26,8 +28,10 @@ const formSchema = z.object({
   }),
 });
 
-const CreatePage = () => {
+export default function AdminDashboard () {
   const router = useRouter();
+  const { status: signInStatus, data: signInCheckResult } = useSigninCheck();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,63 +51,17 @@ const CreatePage = () => {
     }
   }
 
-  return ( 
-    <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
-      <div>
-        <h1 className="text-2xl">
-          Name your course
-        </h1>
-        <p className="text-sm text-slate-600">
-          What would you like to name your course? Don&apos;t worry, you can change this later.
-        </p>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 mt-8"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Course title
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="e.g. 'Advanced web development'"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    What will you teach in this course?
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex items-center gap-x-2">
-              <Link href="/">
-                <Button
-                  type="button"
-                  variant="ghost"
-                >
-                  Cancel
-                </Button>
-              </Link>
-              <Button
-                type="submit"
-                disabled={!isValid || isSubmitting}
-              >
-                Continue
-              </Button>
-            </div>
-          </form>
-        </Form>
+  if (signInStatus === "loading") {
+    return <Loading/>;
+  }
+
+  if (signInCheckResult.signedIn === true) {
+    return ( 
+      <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
+        Admin Cumulative Dashboard 
       </div>
-    </div>
-   );
+     );
+  } else {
+    router.push("/login");
+  }
 }
- 
-export default CreatePage;

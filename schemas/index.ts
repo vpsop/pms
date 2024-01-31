@@ -29,7 +29,7 @@ export const AddCompanySchema = z.object({
     name: z.string().min(2, {
         message: "Name is required"
     }),
-    description: z.string().min(100, {
+    description: z.string().min(5, {
         message: "Description is required"
     })
 });
