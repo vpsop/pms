@@ -27,9 +27,33 @@ export const SignUpSchema = z.object({
 
 export const AddCompanySchema = z.object({
     name: z.string().min(2, {
-        message: "Name is required"
+        message: "Name is required."
     }),
     description: z.string().min(5, {
-        message: "Description is required"
-    })
+        message: "Description is required."
+    }),
+    imageURL: z.string().min(1, {
+        message: "Image URL is required."
+    }),
+    urlSlug: z.string().min(3, {
+        message: "Min 3 characters required in URL slug."
+    }),
+});
+
+export const AddOpeningSchema = z.object({
+    positionName: z.string().min(2, {
+        message: "Position name is required."
+    }),
+    jobDescription: z.string().min(5, {
+        message: "Job Description is required."
+    }),
+    company: z.string().min(1, {
+        message: "Company is required."
+    }),
+    jobLocation: z.string().min(1, {
+        message: "Job location is required."
+    }),
+    urlSlug: z.string().min(3, {
+        message: "Min 3 characters required in URL slug."
+    }),
 });

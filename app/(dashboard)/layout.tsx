@@ -5,6 +5,7 @@ import { Navbar } from "./_components/navbar";
 import { Sidebar } from "./_components/sidebar";
 import { useSigninCheck } from "reactfire";
 import Loading from "@/components/loading";
+import { Toaster } from "@/components/ui/toaster";
 
 const DashboardLayout = ({
   children
@@ -17,7 +18,7 @@ const DashboardLayout = ({
 
 
   if (signInStatus === "loading") {
-    return <Loading/>;
+    return <Loading />;
   }
 
   if (signInCheckResult.signedIn === true) {
@@ -30,6 +31,7 @@ const DashboardLayout = ({
           <Sidebar />
         </div>
         <main className="md:pl-56 pt-[80px] h-full">
+          <Toaster />
           {children}
         </main>
       </div>
@@ -39,7 +41,7 @@ const DashboardLayout = ({
   }
 
 
-  
+
 }
 
 export default DashboardLayout;

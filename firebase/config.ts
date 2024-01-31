@@ -8,3 +8,5 @@ export const FIREBASE_CONFIG = {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
+export const COMPANIES_COLLECTION = "comapnies"
+
