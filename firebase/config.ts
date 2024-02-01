@@ -9,4 +9,5 @@ export const FIREBASE_CONFIG = {
 }
 
 export const COMPANIES_COLLECTION = "comapnies"
+export const OPENINGS_COLLECTION = "openings"
 
