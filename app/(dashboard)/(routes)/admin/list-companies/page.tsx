@@ -3,19 +3,14 @@
 import React, { useTransition } from "react";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
 import { collection, query, orderBy } from "firebase/firestore";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion"
-import { CourseCard } from "@/app/(dashboard)/_components/card";
+import { CompanyCard } from "@/app/(dashboard)/_components/company-card";
+import { COMPANIES_COLLECTION } from "@/firebase/config";
 
 
 export default function ListCompanies() {
 
     const db = useFirestore();
-    const companiesCollection = collection(db, "comapnies");
+    const companiesCollection = collection(db, COMPANIES_COLLECTION);
     const q = query(companiesCollection, orderBy('name', 'asc'));
 
     const { status: dataStatus, data: companies } = useFirestoreCollectionData(q, {
@@ -37,10 +32,12 @@ export default function ListCompanies() {
                     </p>
                 </div>
 
-            
+
+                <div className="w-full px-20 flex gap-5 flex-wrap">
                     {companies.map(function (company) {
-                        return <CourseCard key={company.id} id={""} title={""} imageUrl={company.imageURL} chaptersLength={0} category={""}/>;
+                        return <CompanyCard key={company.id} id={company.id} title={company.name} imageUrl={company.imageURL} category={"Product Based"} />;
                     })}
+                </div>
             </div>
         );
     }

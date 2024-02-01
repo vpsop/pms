@@ -3,7 +3,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { AddCompanySchema } from "@/schemas";
+import { AddCompanySchema, AddOpeningSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,34 +12,92 @@ import { Textarea } from "@/components/ui/textarea";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import addCompany from "@/firebase/add-company";
-import { useFirestore } from "reactfire";
+import { useFirestore, useFirestoreCollectionData } from "reactfire";
 import { useToast } from "@/components/ui/use-toast"
 import { error } from "console";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { COMPANIES_COLLECTION } from "@/firebase/config";
+import { collection, query, orderBy } from "firebase/firestore";
+import addOpening from "@/firebase/add-opening";
 
 
-export default function AddCompany() {
+export default function AddOpening() {
 
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
-    const db = useFirestore();
 
-    const form = useForm<z.infer<typeof AddCompanySchema>>({
-        resolver: zodResolver(AddCompanySchema),
+
+    const db = useFirestore();
+    const companiesCollection = collection(db, COMPANIES_COLLECTION);
+    const q = query(companiesCollection, orderBy('name', 'asc'));
+
+    const { status: comapniesListStatus, data: companiesList } = useFirestoreCollectionData(q, {
+        idField: 'id', // this field will be added to the object created from each document
+    });
+
+    const getSelectPlaceholder = () => {
+        if (comapniesListStatus === "loading") {
+            return <span className="flex items-center"><ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> Loading Companies...</span>
+        } else if (comapniesListStatus === "error") {
+            return <span className="text-destructive">Error Loading comapnies</span>;
+        } else {
+            return <span>Select Company</span>;
+        }
+    }
+
+    const getSelectItems = () => {
+        if (comapniesListStatus === "loading") {
+            return (
+                <SelectContent>
+                    <SelectItem value="error"><ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> Loading Companies...</SelectItem>
+                </SelectContent>
+            );
+        } else if (comapniesListStatus === "error") {
+            return (
+                <SelectContent>
+                    <SelectItem value="error"><span className="text-destructive">Error Loading comapnies</span></SelectItem>
+                </SelectContent>
+            );
+        } else {
+            return (
+                <SelectContent>
+                    {companiesList.map((comapny) => {
+                        return <SelectItem value={comapny.id}>{comapny.name}</SelectItem>;
+                    })}
+                </SelectContent>
+            );
+        }
+    }
+
+
+
+    const form = useForm<z.infer<typeof AddOpeningSchema>>({
+        resolver: zodResolver(AddOpeningSchema),
         defaultValues: {
-            name: "",
-            description: "",
+            positionName: "",
+            jobDescription: "",
+            company: "",
+            jobLocation: "",
+            urlSlug: ""
         },
     });
 
-    const onSubmit = (values: z.infer<typeof AddCompanySchema>) => {
-        const data = AddCompanySchema.safeParse(values);
+    const onSubmit = (values: z.infer<typeof AddOpeningSchema>) => {
+        const data = AddOpeningSchema.safeParse(values);
         if (data.success) {
             startTransition(async () => {
                 try {
-                    let result = await addCompany(db, data.data.name, data.data.description, data.data.imageURL, data.data.urlSlug);
-
-                    if(result.error) {
+                    let result = await addOpening(
+                        db, 
+                        data.data.positionName, 
+                        data.data.jobDescription, 
+                        data.data.company, 
+                        data.data.jobLocation,
+                        data.data.urlSlug
+                    );
+                    
+                    if (result.error) {
                         toast({
                             title: "An error occured.",
                             description: result.error,
@@ -49,7 +107,7 @@ export default function AddCompany() {
                             title: "Done",
                             description: result.result,
                         });
-                        router.push("/admin/list-companies");
+                        // router.push("/admin/list-openings");
                     }
                 } catch (err) {
                     console.log(err);
@@ -63,30 +121,30 @@ export default function AddCompany() {
             <Form {...form}>
                 <div className="mb-8 text-start w-[500px]">
                     <h1 className="text-2xl">
-                        Add a Company
+                        Add an Opening
                     </h1>
                     <p className="text-sm text-slate-600">
-                        Add a company that can come to your college for placement drive.
+                        Add an opening where eligible students can apply.
                     </p>
                 </div>
 
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4 w-[500px]"
+                    className="space-y-4 w-[500px] pb-10"
                 >
                     <div className="space-y-8">
 
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="positionName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Company Name</FormLabel>
+                                    <FormLabel>Position Name</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             disabled={isPending}
-                                            placeholder="Eg. Google"
+                                            placeholder="Eg. Software Developer"
                                             type="text"
                                         />
                                     </FormControl>
@@ -97,15 +155,53 @@ export default function AddCompany() {
 
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="company"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel>Company</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={getSelectPlaceholder()} />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        {getSelectItems()}
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="jobDescription"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Job Description</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
-                                            placeholder="Company description"
+                                            placeholder="Job description"
                                             disabled={isPending}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="jobLocation"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Job Location</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isPending}
+                                            placeholder="Eg. Bengaluru"
+                                            type="text"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -118,32 +214,12 @@ export default function AddCompany() {
                             name="urlSlug"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>URL Slug</FormLabel>
+                                    <FormLabel>Job URL Slug</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             disabled={isPending}
-                                            placeholder="Eg. google"
-                                            type="text"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-
-                        <FormField
-                            control={form.control}
-                            name="imageURL"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>imageURL</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Eg. URL to cover image of company"
+                                            placeholder="Eg. job-1"
                                             type="text"
                                         />
                                     </FormControl>
@@ -157,7 +233,7 @@ export default function AddCompany() {
                             className="w-full"
                             disabled={isPending}
                         >
-                            {isPending ? <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> : <span>Add Company</span>}
+                            {isPending ? <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> : <span>Add Opening</span>}
                         </Button>
                     </div>
                 </form>
