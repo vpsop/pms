@@ -1,4 +1,4 @@
-import { Logo } from "@/app/(dashboard)/_components/logo"
+import { Logo } from "@/app/(signin-required)/(dashboard)/_components/logo"
 import { UserButton } from "@/components/user-button"
 
 export const Navbar = () => {
