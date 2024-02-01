@@ -63,7 +63,7 @@ export default function AddOpening() {
             return (
                 <SelectContent>
                     {companiesList.map((comapny) => {
-                        return <SelectItem value={comapny.id}>{comapny.name}</SelectItem>;
+                        return <SelectItem key={comapny.id} value={comapny.id}>{comapny.name}</SelectItem>;
                     })}
                 </SelectContent>
             );
@@ -89,14 +89,14 @@ export default function AddOpening() {
             startTransition(async () => {
                 try {
                     let result = await addOpening(
-                        db, 
-                        data.data.positionName, 
-                        data.data.jobDescription, 
-                        data.data.company, 
+                        db,
+                        data.data.positionName,
+                        data.data.jobDescription,
+                        data.data.company,
                         data.data.jobLocation,
                         data.data.urlSlug
                     );
-                    
+
                     if (result.error) {
                         toast({
                             title: "An error occured.",
@@ -119,7 +119,7 @@ export default function AddOpening() {
     return (
         <div className="flex flex-col items-center justify-start w-full h-full pt-10">
             <Form {...form}>
-                <div className="mb-8 text-start w-[500px]">
+                <div className="mb-10 text-start w-full px-60">
                     <h1 className="text-2xl">
                         Add an Opening
                     </h1>
@@ -130,9 +130,9 @@ export default function AddOpening() {
 
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4 w-[500px] pb-10"
+                    className="space-y-4 w-full px-60 pb-10"
                 >
-                    <div className="space-y-8">
+                    <div className="grid grid-cols-2 gap-5">
 
                         <FormField
                             control={form.control}
@@ -167,24 +167,6 @@ export default function AddOpening() {
                                         </FormControl>
                                         {getSelectItems()}
                                     </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="jobDescription"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Job Description</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            {...field}
-                                            placeholder="Job description"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -228,9 +210,27 @@ export default function AddOpening() {
                             )}
                         />
 
+                        <FormField
+                            control={form.control}
+                            name="jobDescription"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormLabel>Job Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            {...field}
+                                            placeholder="Job description"
+                                            disabled={isPending}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <Button
                             type="submit"
-                            className="w-full"
+                            className="w-full col-span-2 mt-5"
                             disabled={isPending}
                         >
                             {isPending ? <ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> : <span>Add Opening</span>}
