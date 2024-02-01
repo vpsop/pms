@@ -1,6 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
-import { BookOpenIcon } from "lucide-react";
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/navigation";
 
 interface CompanyCardProps {

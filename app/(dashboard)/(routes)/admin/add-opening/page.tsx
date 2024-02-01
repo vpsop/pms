@@ -3,7 +3,7 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { AddCompanySchema, AddOpeningSchema } from "@/schemas";
+import { AddOpeningSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,8 @@ import React, { useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
-import addCompany from "@/firebase/add-company";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
 import { useToast } from "@/components/ui/use-toast"
-import { error } from "console";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { COMPANIES_COLLECTION } from "@/firebase/config";
 import { collection, query, orderBy } from "firebase/firestore";
@@ -25,8 +23,6 @@ export default function AddOpening() {
 
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
-    const router = useRouter();
-
 
     const db = useFirestore();
     const companiesCollection = collection(db, COMPANIES_COLLECTION);
@@ -69,8 +65,6 @@ export default function AddOpening() {
             );
         }
     }
-
-
 
     const form = useForm<z.infer<typeof AddOpeningSchema>>({
         resolver: zodResolver(AddOpeningSchema),
