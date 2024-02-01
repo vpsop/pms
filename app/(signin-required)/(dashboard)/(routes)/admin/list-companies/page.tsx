@@ -3,7 +3,7 @@
 import React, { useTransition } from "react";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
 import { collection, query, orderBy } from "firebase/firestore";
-import { CompanyCard } from "@/app/(dashboard)/_components/company-card";
+import { CompanyCard } from "@/app/(signin-required)/(dashboard)/_components/company-card";
 import { COMPANIES_COLLECTION } from "@/firebase/config";
 
 

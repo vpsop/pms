@@ -4,8 +4,8 @@ import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useSigninCheck } from "reactfire";
-import { Navbar } from "./(dashboard)/_components/navbar";
-import { Sidebar } from "./(dashboard)/_components/sidebar";
+import { Navbar } from "./(signin-required)/(dashboard)/_components/navbar";
+import { Sidebar } from "./(signin-required)/(dashboard)/_components/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import AdminDashboard from "@/components/admin-dashboard";
 

@@ -4,7 +4,7 @@ import React from "react";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
 import { collection, query, orderBy } from "firebase/firestore";
 import { OPENINGS_COLLECTION } from "@/firebase/config";
-import { OpeningTile } from "@/app/(dashboard)/_components/opening-tile";
+import { OpeningTile } from "@/app/(signin-required)/(dashboard)/_components/opening-tile";
 
 
 export default function ListOpenings() {
