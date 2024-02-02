@@ -8,10 +8,8 @@ import { doc } from "firebase/firestore";
 import { OPENINGS_COLLECTION } from "@/firebase/config";
 
 const DashboardLayout = ({
-    children,
     params
 }: {
-    children: React.ReactNode;
     params: { slug: string };
 }) => {
 
