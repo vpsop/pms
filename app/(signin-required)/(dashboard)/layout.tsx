@@ -1,18 +1,21 @@
-"use client";
+"use client"
 
-import Loading from "@/components/loading";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { Navbar } from "./_components/navbar";
+import { Sidebar } from "./_components/sidebar";
 import { useSigninCheck } from "reactfire";
-import { Navbar } from "./(signin-required)/(dashboard)/_components/navbar";
-import { Sidebar } from "./(signin-required)/(dashboard)/_components/sidebar";
+import Loading from "@/components/loading";
 import { Toaster } from "@/components/ui/toaster";
-import AdminDashboard from "@/components/admin-dashboard";
 
-export default function Home() {
+const DashboardLayout = ({
+  children
+}: {
+  children: React.ReactNode;
+}) => {
 
   const router = useRouter();
   const { status: signInStatus, data: signInCheckResult } = useSigninCheck();
+
 
   if (signInStatus === "loading") {
     return <Loading />;
@@ -29,11 +32,16 @@ export default function Home() {
         </div>
         <main className="md:pl-56 pt-[80px] h-full">
           <Toaster />
-          <AdminDashboard />
+          {children}
         </main>
       </div>
     );
   } else {
     router.push("/login");
   }
+
+
+
 }
+
+export default DashboardLayout;
