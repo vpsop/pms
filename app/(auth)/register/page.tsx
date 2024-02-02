@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, useFirestore, useSigninCheck } from "reactfire";
 import Loading from "@/components/loading";
@@ -31,14 +31,15 @@ export default function SignUpPage() {
 			course: undefined
 		},
     });
-    
 
-    if (signInStatus === "loading") {
+    useEffect(() => {
+		if (signInCheckResult && signInCheckResult.signedIn === true) {
+			router.push("/");
+		}
+	}, [router, signInCheckResult]);
+
+	if (signInStatus === "loading") {
         return <Loading/>;
-    }
-
-    if (signInCheckResult.signedIn === true) {
-        router.push("/");
     }
 
 

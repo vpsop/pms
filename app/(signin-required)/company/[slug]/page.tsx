@@ -67,29 +67,6 @@ const DashboardLayout = ({
             </div>
         );
     }
-
-
-    if (signInStatus === "loading") {
-        return <Loading />;
-    }
-
-    if (signInCheckResult.signedIn === true) {
-        return (
-            <div className="h-screen">
-                <div className="h-[80px] fixed inset-y-0 w-full z-50">
-                    <Navbar />
-                </div>
-                <main className="pt-[80px] h-full">
-                    <p>Company: {params.slug}</p>
-                </main>
-            </div>
-        );
-    } else {
-        router.push("/login");
-    }
-
-
-
 }
 
 export default DashboardLayout;

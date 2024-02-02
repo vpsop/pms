@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useTransition } from "react";
+import React, { useEffect, useTransition } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useAuth, useSigninCheck, useUser } from "reactfire";
 import Loading from "@/components/loading";
@@ -40,15 +40,18 @@ export default function LoginPage() {
 				console.log(err);
 			}
 		});
-    }
+	}
+	
+	useEffect(() => {
+		if (signInCheckResult && signInCheckResult.signedIn === true) {
+			router.push("/");
+		}
+	}, [router, signInCheckResult]);
 
     if (signInStatus === "loading") {
         return <Loading/>;
     }
 
-    if (signInCheckResult.signedIn === true) {
-        router.push("/");
-    }
 
 	return (
 		<main className="flex min-h-screen flex-col items-center space-y-6 p-24">
