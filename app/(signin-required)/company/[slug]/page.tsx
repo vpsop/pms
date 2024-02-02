@@ -14,10 +14,8 @@ import { collection, query, orderBy, doc } from "firebase/firestore";
 import { COMPANIES_COLLECTION } from "@/firebase/config";
 
 const DashboardLayout = ({
-    children,
     params
 }: {
-    children: React.ReactNode;
     params: { slug: string };
 }) => {
 
