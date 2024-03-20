@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart, List, ListTodo, Notebook, NotebookPen, PlusSquare } from "lucide-react";
+import { BarChart, List, ListTodo, Notebook, NotebookPen, PlusSquare, UserRoundPlus } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { SidebarItem } from "./sidebar-item";
 
@@ -24,6 +24,11 @@ const adminRoutes = [
     icon: Notebook,
     label: "List Openings",
     href: "/admin/list-openings",
+  },
+  {
+    icon: UserRoundPlus,
+    label: "Create Accounts",
+    href: "/admin/create-student-accounts",
   },
 ];
 

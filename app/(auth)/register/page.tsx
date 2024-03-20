@@ -53,6 +53,8 @@ export default function SignUpPage() {
 
 	return (
 		<main className="flex min-h-screen flex-col items-center space-y-6 p-24">
+			<h3 className="text-4xl font-semibold mb-[-10px]">PLACENEXT</h3>
+			<h3 className="text-md mb-4">SIGN UP</h3>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
